@@ -1,3 +1,10 @@
+# LMS Trade File Analysis
+## Problem Statement
+When migrating systems from QUIC/LMS to F22, the inputs (trade, market data, refernce data, counterpart hiearchy files) will be different (in terms of format values/content), pricing/PFE models will be different and we know the pricing/PFE outputs will be different. We need to find out a smart way to indentify the main underlying reasons for those differences, for the purpose of reconciliation/explain/migration.
+
+## Proposed Solution
+Parse and format input trade data and market data from Quic/LMS and F22, find the differences in trade data and sort (diff function), run differences in a decision tree model (tree regression), feed decision tree data to Eliza AI and she will generate a report providing insights on the main underlying reasons for the differences.
+
 ## Decision Tree Structure
 A Decision Tree consists of:
 - **Root Node**: The starting point of the tree, representing the entire dataset.
@@ -77,6 +84,37 @@ Using the provided code, here’s how the outcomes are determined:
 |   |--- SellCurrency_d0_USD >  0.50
 |   |   |--- Standalone_Significant: 1
 ```
+
+Gini refers to the Gini impurity or Gini index, which is a measure of how often a randomly chosen element from the dataset would be incorrectly labeled if it was randomly labeled according to the distribution of labels in the subset. It is used in Decision Trees to evaluate the quality of a split.
+
+### Gini Impurity
+
+**Formula:**
+\[ Gini(p) = 1 - \sum_{i=1}^{n} p_i^2 \]
+Where \( p_i \) is the probability of an element being classified as class \( i \).
+
+### Interpretation
+
+- **Range**: Gini impurity ranges between 0 and 0.5 for binary classification problems.
+  - **0**: Indicates a pure node where all elements are of the same class.
+  - **0.5**: Indicates a perfectly impure node where the elements are split evenly across all classes.
+
+### Calculation Example
+
+For a binary classification problem:
+
+- Suppose we have a node with 10 samples: 7 of class A and 3 of class B.
+- The probabilities are \( p_A = 7/10 = 0.7 \) and \( p_B = 3/10 = 0.3 \).
+- Gini impurity for this node is:
+  \[ Gini = 1 - (0.7^2 + 0.3^2) = 1 - (0.49 + 0.09) = 1 - 0.58 = 0.42 \]
+
+### Using Gini in Decision Trees
+
+When building a Decision Tree, the algorithm:
+1. **Calculates Gini impurity** for all possible splits.
+2. **Selects the split** that minimizes the Gini impurity of the resulting subsets.
+
+By minimizing the Gini impurity at each split, the Decision Tree aims to create nodes that are as pure as possible, leading to better classification accuracy.
 
 - This tree predicts `Standalone_Significant` based on the `Days`, `BuyCurrency_d0_EUR`, and `SellCurrency_d0_USD` features.
 
